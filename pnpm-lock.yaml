@@ -8,9 +8,11 @@ specifiers:
   '@vitejs/plugin-react-swc': ^3.0.0
   autoprefixer: ^10.4.13
   axios: ^1.2.4
+  material: link:@mui/icons/material
   postcss: ^8.4.21
   react: ^18.2.0
   react-dom: ^18.2.0
+  react-icons: ^4.7.1
   react-redux: ^8.0.5
   react-router-dom: ^6.7.0
   redux: ^4.2.0
@@ -24,9 +26,11 @@ dependencies:
   '@types/react-redux': 7.1.25
   autoprefixer: 10.4.13_postcss@8.4.21
   axios: 1.2.4
+  material: link:@mui/icons/material
   postcss: 8.4.21
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-icons: 4.7.1_react@18.2.0
   react-redux: 8.0.5_sfvtgtw6zg4uu5uf4vg7hgzorm
   react-router-dom: 6.7.0_biqbaboplfbrettd7655fr4n2y
   redux: 4.2.0
@@ -922,6 +926,14 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-icons/4.7.1_react@18.2.0:
+    resolution: {integrity: sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-is/16.13.1:

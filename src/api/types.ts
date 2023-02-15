@@ -3,10 +3,18 @@ export interface GitRepo {
   author: string;
   commits: GitCommit[];
   cacheDate: number;
+  onPage: number;
 }
 
 export interface GitCommit {
-  url: string;
+  html_url: string;
   shortSha: string;
   sha: string;
+  commit: {
+    message: string;
+    author: {
+      name: string;
+      date: string;
+    }
+  }
 }

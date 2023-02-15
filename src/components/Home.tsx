@@ -1,12 +1,11 @@
-import React, { MouseEventHandler, TransitionEventHandler, useEffect, useRef, useState } from "react";
+import { Outlet } from "react-router-dom";
 import "./Home.sass";
-import { ReadonlyActionMatcherDescriptionCollection } from "@reduxjs/toolkit/dist/createReducer";
-import { fetchRepo, getRepo } from "../api/GithubApi";
-import Timeline from "./Timeline";
 
 export const Home = () => {
 
   return (
-    <Timeline/>
+    <div className="bg-[url('/public/bg_logo.png')] h-screen">
+      <Outlet></Outlet>
+    </div>
   );
 };

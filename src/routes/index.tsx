@@ -1,15 +1,20 @@
-import { createBrowserRouter, defer } from 'react-router-dom'
+import { createBrowserRouter, Link } from 'react-router-dom'
 import { Home } from '../components/Home'
-import { getRepo } from '../api/GithubApi'
-
-async function repoLoader(){
-  const repo = await getRepo('kapselg', 'dzialki')
-  return defer({repo})
-}
+import Timeline from '../components/Timeline'
 
 export const routes = createBrowserRouter([
   {
-    path: '/',
-    element: <Home/>
+    path: '*',
+    element: <Home/>,
+    children: [
+      {
+        path: ':repoOwner/:repoName',
+        element: <Timeline/>,
+      },
+      {
+        path: '*',
+        element: <Link to="/haskell/random" className='button absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'>Go to example repo</Link>
+      }
+    ]
   }
 ])
