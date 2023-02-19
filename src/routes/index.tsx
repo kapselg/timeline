@@ -1,6 +1,6 @@
 import { createBrowserRouter, Link } from 'react-router-dom'
 import { Home } from '../components/Home'
-import Timeline from '../components/Timeline'
+import App from '../components/App'
 
 export const routes = createBrowserRouter([
   {
@@ -9,7 +9,7 @@ export const routes = createBrowserRouter([
     children: [
       {
         path: ':repoOwner/:repoName',
-        element: <Timeline/>,
+        element: <App/>,
       },
       {
         path: '*',
