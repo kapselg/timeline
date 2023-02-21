@@ -6,6 +6,11 @@ body{
   overflow-y: hidden;
 }
 
+
 .button{
-  @apply border-2 border-[#f0f6fc1a] rounded-xl relative bg-[#21262d] text-[#58a6ff] text-center hover:bg-[#21262dcc] px-2 py-1 font-mono h-min cursor-pointer;
+  @apply border-2 border-[#f0f6fc1a] rounded-xl relative bg-[#21262d] text-gh-blue text-center hover:bg-[#21262dcc] px-2 py-1 font-mono h-min cursor-pointer;
+}
+
+.b-contain span {
+  @apply text-gh-blue
 }

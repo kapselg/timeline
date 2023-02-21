@@ -18,3 +18,5 @@ export interface GitCommit {
     }
   }
 }
+
+export type TimelineParams = {repoOwner: string, repoName: string}

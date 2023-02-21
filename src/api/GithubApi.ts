@@ -1,6 +1,5 @@
 import axios from "axios";
-import { TimelineParams } from "../types.js";
-import { GitCommit, GitRepo } from "./types.js";
+import { GitCommit, GitRepo, TimelineParams } from "./types.js";
 
 const expirationTime = 7200000;
 const makeCacheName = ({ repoOwner, repoName }: TimelineParams) =>
@@ -17,6 +16,7 @@ export async function fetchCommits({
   repoName,
   page,
 }: TimelineParams & { page: number }) {
+  console.log('fetching commits');
   const response = await axios<GitCommit[]>(
     `https://api.github.com/repos/${repoOwner}/${repoName}/commits`,
     {
@@ -26,6 +26,7 @@ export async function fetchCommits({
       },
     }
   );
+  
   return response.data.map((val) => {
     val.shortSha = val.sha.substring(0, 7);
     return val;
@@ -37,16 +38,19 @@ export async function fetchCommits({
  * @param repoName Repo name
  * @returns Cached or renewed repo data
  */
-export async function getRepo({ repoOwner, repoName }: TimelineParams) {
+export async function getCachedRepo({ repoOwner, repoName }: TimelineParams) {
   const cached = localStorage.getItem(makeCacheName({ repoOwner, repoName }));
 
   if (cached) {
     const cachedRepoData = JSON.parse(cached) as GitRepo;
 
-    if (new Date().getTime() - cachedRepoData.cacheDate < expirationTime) {
+    if (new Date().getTime() - cachedRepoData.cacheDate < expirationTime) {      
       return cachedRepoData;
     }
+    
   }
+  console.log('new');
+  
   return initRepo({ repoOwner, repoName });
 }
 
@@ -56,9 +60,11 @@ export async function getRepo({ repoOwner, repoName }: TimelineParams) {
  * @returns Information about GitHub repo from API
  */
 export async function initRepo({ repoOwner, repoName }: TimelineParams) {
+  console.log('fetching repo');
   const response = await axios<GitRepo>(
     `https://api.github.com/repos/${repoOwner}/${repoName}`
   );
+  
   const data = response.data;
   data.commits = await fetchCommits({ repoOwner, repoName, page: 1 });
   data.cacheDate = new Date().getTime();
@@ -72,10 +78,9 @@ export async function initRepo({ repoOwner, repoName }: TimelineParams) {
 export async function getNextPage({
   repoOwner,
   repoName,
-  $repo,
-}: TimelineParams & { $repo: Promise<GitRepo> }) {
-  const repo = await $repo;
-  const response = await fetchCommits({
+  repo,
+}: TimelineParams & { repo: GitRepo }) {
+    const response = await fetchCommits({
     repoOwner,
     repoName,
     page: repo.onPage + 1,
