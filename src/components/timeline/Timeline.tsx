@@ -7,8 +7,8 @@ import { GitRepo, TimelineParams } from "../../api/types";
 export default function Timeline() {
   const repoInfo = useParams() as TimelineParams;
 
-  const repoData = GithubApi.getCachedRepo(repoInfo);
-  const count = useRef(0);
+  const [repoData, setRepoData] = useState(GithubApi.getCachedRepo(repoInfo));
+  const [count, setCount] = useState<number>(0);
   // /**
   //  * @deprecated
   //  */
@@ -24,42 +24,43 @@ export default function Timeline() {
   //   }
   // }
 
-  function refreshRepo() {
+  async function refreshRepo() {
     GithubApi.clearCache(repoInfo);
-    GithubApi.initRepo(repoInfo);
+    setCount(0);
+    setRepoData(GithubApi.initRepo(repoInfo));
   }
 
   return (
     <>
-      <div className="absolute top-10">
-        <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>
-          <Await resolve={repoData} errorElement={<p>Error loading repo data!</p>}>
-            {(data: GitRepo) => <CommitButtonList repo={data}></CommitButtonList>}
-          </Await>
-        </Suspense>
-      </div>
-      <div className="flex w-scree items-baseline h-14">
+      <div className="flex w-screen items-baseline h-14">
         <button className="button whitespace-nowrap m-3 mt-2 text-lg" onClick={() => refreshRepo()}>
           Refetch repo
         </button>
         <button className="button whitespace-nowrap m-3 mt-2 text-lg">Fetch from date</button>
-        <div className="grow text-center text-white font-mono text-2xl">
-          Showing{" "}
-          <span className="text-[#58a6ff]">
-            <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">...</p>}>
-              <Await resolve={repoData}>{(data: GitRepo) => data.commits.length}</Await>
-            </Suspense>
-          </span>{" "}
-          commits from{" "}
-          <a className="text-[#58a6ff]" href={`https://github.com/${repoInfo.repoOwner}/${repoInfo.repoName}`} target="_blank">
-            {repoInfo.repoOwner}/{repoInfo.repoName}
-          </a>
-        </div>
-        <Link to="/support">
+        <Link to="/support" className="ml-auto">
           <button className="button m-3 !text-red-400">
             Support <MdCoffee className="inline"></MdCoffee>
           </button>
         </Link>
+      </div>
+      <div className="grow text-center text-white font-mono text-2xl xl:-mt-10 mt-8 sm:mt-0">
+        Showing&nbsp;
+        <span className="text-[#58a6ff]">
+          <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">...</p>}>
+            <Await resolve={repoData}>{(data: GitRepo) => count || data.commits.length}</Await>
+          </Suspense>
+        </span>
+        &nbsp;commits from&nbsp;
+        <a className="text-[#58a6ff]" href={`https://github.com/${repoInfo.repoOwner}/${repoInfo.repoName}`} target="_blank">
+          {repoInfo.repoOwner}/{repoInfo.repoName}
+        </a>
+      </div>
+      <div className="">
+        <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>
+          <Await resolve={repoData} errorElement={<p>Error loading repo data!</p>}>
+            {(data: GitRepo) => <CommitButtonList setCount={setCount} repo={data}></CommitButtonList>}
+          </Await>
+        </Suspense>
       </div>
     </>
   );

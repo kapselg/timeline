@@ -1,6 +1,8 @@
 export interface GitRepo {
   name: string;
-  author: string;
+  owner: {
+    login: string
+  };
   commits: GitCommit[];
   cacheDate: number;
   onPage: number;

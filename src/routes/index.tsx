@@ -1,5 +1,6 @@
 import { createBrowserRouter, Link } from 'react-router-dom'
-import { App } from '../components/App'
+import { App } from '../App'
+import Home from '../components/Home'
 import Timeline from '../components/timeline/Timeline'
 
 export const routes = createBrowserRouter([
@@ -13,7 +14,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: '*',
-        element: <Link to="/haskell/random" className='button absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/4'>Go to example repo</Link>
+        element: <Home/>
       }
     ]
   }

@@ -1,9 +1,9 @@
 {
   "name": "timeline",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "homepage": "https://kapselg.github.io/timeline",
+  "homepage": "https://wojd0.github.io/timeline",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --base /timeline",
