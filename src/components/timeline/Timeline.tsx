@@ -4,6 +4,8 @@ import { Await, Link, useParams } from "react-router-dom";
 import CommitButtonList from "./CommitButtonList";
 import * as GithubApi from "../../api/GithubApi";
 import { GitRepo, TimelineParams } from "../../api/types";
+import React from "react";
+
 export default function Timeline() {
   const repoInfo = useParams() as TimelineParams;
 
@@ -31,19 +33,8 @@ export default function Timeline() {
   }
 
   return (
-    <>
-      <div className="flex w-screen items-baseline h-14">
-        <button className="button whitespace-nowrap m-3 mt-2 text-lg" onClick={() => refreshRepo()}>
-          Refetch repo
-        </button>
-        <button className="button whitespace-nowrap m-3 mt-2 text-lg">Fetch from date</button>
-        <Link to="/support" className="ml-auto">
-          <button className="button m-3 !text-red-400">
-            Support <MdCoffee className="inline"></MdCoffee>
-          </button>
-        </Link>
-      </div>
-      <div className="grow text-center text-white font-mono text-2xl xl:-mt-10 mt-8 sm:mt-0">
+    <div className="h-screen flex flex-col ">
+      <div className="text-center text-white font-mono text-2xl xl:-mt-10 mt-8 sm:mt-0">
         Showing&nbsp;
         <span className="text-[#58a6ff]">
           <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">...</p>}>
@@ -55,13 +46,17 @@ export default function Timeline() {
           {repoInfo.repoOwner}/{repoInfo.repoName}
         </a>
       </div>
-      <div className="">
-        <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>
-          <Await resolve={repoData} errorElement={<p>Error loading repo data!</p>}>
-            {(data: GitRepo) => <CommitButtonList setCount={setCount} repo={data}></CommitButtonList>}
-          </Await>
-        </Suspense>
+      <div className="flex w-full justify-between items-baseline h-14 ">
+        <button className="button whitespace-nowrap m-3 mt-2 text-lg" onClick={() => refreshRepo()}>
+          Refetch repo
+        </button>
+        <button className="button whitespace-nowrap m-3 mt-2 text-lg">Fetch from date</button>
       </div>
-    </>
+      <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>
+        <Await resolve={repoData} errorElement={<p>Error loading repo data!</p>}>
+          {(data: GitRepo) => <CommitButtonList setCount={setCount} repo={data}></CommitButtonList>}
+        </Await>
+      </Suspense>
+    </div>
   );
 }

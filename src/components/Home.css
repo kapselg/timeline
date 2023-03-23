@@ -1,0 +1,7 @@
+label{
+  @apply text-lg
+}
+
+input{
+  @apply sm:w-96 text-black rounded-lg p-2
+}

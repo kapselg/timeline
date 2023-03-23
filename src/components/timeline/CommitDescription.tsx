@@ -18,7 +18,7 @@ export default function CommitDescription(props: {i: GitCommit, setMouse: (v: bo
 
 
   return (
-    <div className="hidden absolute text-black h-20 transform pt-16 -translate-x-1/2 py-2 left-1/2 opacity-0 group-hover:block group-hover:opacity-100 transition-all hover:block z-50 cursor-default duration-200 delay-75 max-w-xl" ref={props.elRef}>
+    <div className="hidden absolute text-black h-20 transform pt-16 -translate-x-1/2 py-2 left-1/2 top-1/2 opacity-0 group-hover:block group-hover:opacity-100 transition-all hover:block z-50 cursor-default duration-200 delay-75 max-w-xl" ref={props.elRef}>
             <ul className="bg-gh-bg text-white border-gh-border rounded-xl p-3 [&>li]:mb-2" onMouseEnter={() => props.setMouse(true)} onMouseLeave={() => props.setMouse(false)}>
               <li><span className="text-[#58a6ff]">Date:</span> <br /> {commitDate.toLocaleDateString()} at {commitDate.toLocaleTimeString()}</li>
               <li><span className="text-[#58a6ff]">SHA:</span> <br /> {props.i.sha}</li>

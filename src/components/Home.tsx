@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-
+import './Home.css'
 
 export default function Home() {
   const repoOwner = useRef(document.createElement('input'));
@@ -8,21 +8,28 @@ export default function Home() {
 
 
   return (
-    <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gh-bg p-6 rounded-lg scale-[.85] sm:scale-100 text-white font-mono shadow-lg">
-      <h1 className="text-center text-2xl text-gh-blue">
+    <div className="absolute sm:top-1/2 sm:left-1/2 transform sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gh-bg sm:rounded-lg w-full h-full sm:h-auto sm:w-11/12 text-white font-mono shadow-lg grid place-items-center sm:block">
+      {/* <h1 className="text-center text-2xl text-gh-blue">
         Enter repo's owner and name
-      </h1>
-      <div className="flex mt-6">
-        github.com/<input type="text" className="w-32 text-black mx-1" ref={repoOwner} />/
-        <input type="text" className="w-32 text-black mx-1" ref={repoName} />
+      </h1> */}
+      <img src="/bg_logo_text.png" alt="Site's logo" className="h-28 mx-auto mt-6" />
+      <div className="mt-6 grid place-items-center">
+        <label htmlFor="repoName">
+          Repository name:
+        </label>
+        <input name="repoName" type="text" ref={repoOwner} /><br />
+        <label htmlFor="repoOwner">
+          Repository owner:
+        </label>
+        <input name="repoOwner" type="text" ref={repoName} />
       </div>
-      <div className="text-center w-full mt-6">
-        <Link to={`${repoOwner.current.value}/${repoName.current.value}`} className='button'>
-          Go to timeline
+      <div className="text-center w-full mt-10">
+        <Link  to={`${repoOwner.current.value}/${repoName.current.value}`} className='!py-4 !px-4 text-lg button'>
+          Go to the timeline
         </Link>
       </div>
-      <div className="button !text-white mt-6">
-        You can also put the repo's owner and name in the url, for example: <Link to='facebook/react' className="text-gh-blue">{`${location.origin}/facebook/react`}</Link>
+      <div className="button !text-white mt-20 mb-10 mx-auto sm:w-1/2">
+        You can also put the repo's owner and name in the url, for example: <Link to='facebook/react' className="text-gh-blue break-words">{`${location.origin}/facebook/react`}</Link>
       </div>
     </div>
   );

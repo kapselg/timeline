@@ -1,5 +1,5 @@
 import { data } from "autoprefixer";
-import React, { MutableRefObject, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, MutableRefObject, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { MdHistory } from "react-icons/md";
 import { Await, useFetcher } from "react-router-dom";
 import { clearCache, getNextPage, initRepo } from "../../api/GithubApi";
@@ -14,7 +14,7 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
 
 
   async function nextPage() {
-    const result = await getNextPage({ ...props, repoName: props.repo.name, repoOwner: props.repo.owner.login })    
+    const result = await getNextPage({ ...props, repoName: props.repo.name, repoOwner: props.repo.owner.login })
     setCommitList(setupCommitList(result))
     setTimeout(() => {
       props.setCount(result.commits.length)
@@ -36,7 +36,7 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
       const sameDate = [];
       for (let commit of commits.slice(i)) {
         if (new Date(commit.props.i.commit.author.date).toDateString() == commitDate.toDateString()) {
-          sameDate.push(<div key={commitDate.toString() + "_" + i}>{commit}</div>);
+          sameDate.push(<Fragment key={commitDate.toString() + "_" + i}>{commit}</Fragment>);
           i++;
         } else {
           i++;
@@ -46,11 +46,13 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
 
       return [
         ...grouped,
-
-        <div className="flex border-t-2 mx-8 py-2 border-white relative" key={commitDate.toString()}>
-          <div className="absolute top-12 font-mono text-white text-lg cursor-default">{commitDate.toLocaleDateString()}</div>
-          {sameDate}
-        </div>,
+        <div className="relative md:mx-8 w-full md:w-auto">
+          <span className="text-white font-mono">{commitDate.toLocaleDateString()}</span>
+          <div className="flex md:flex md:flex-row flex-col border-l-2 border-t-2 py-2 border-white" key={commitDate.toString()}>
+            {sameDate}
+          </div>
+        </div>
+        ,
         ...checkGroups(i),
       ];
     };
@@ -58,36 +60,22 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
     return checkGroups(0);
   }
 
-  function lerp(start: number, end: number, t: number) {
-    return start * (1 - t) + end * t;
-  }
-
-  const frame = useRef(0);
-  const target = useRef(0);
-  const ease = 0.5;
-
-  // function animate() {
-  //   frame.current = +lerp(frame.current, target.current, ease).toFixed(2);
-  //   document.getElementById("timeline")?.scrollTo({ left: frame.current });
-  //   requestAnimationFrame(animate);
-  // }
-
   function scroll(e: React.WheelEvent<HTMLDivElement>) {
-    
     e.currentTarget.scrollBy({
       left: e.deltaY * (e.altKey ? e.currentTarget.scrollWidth / window.innerWidth / 2 : 1),
     })
   }
+
+  function empty() { }
   return (
-    <>
-      <div className="w-screen h-12"></div>
-      <div ref={timeline} id="timeline" className="flex overflow-x-scroll w-screen" onWheel={scroll}>
-        <div className="p-24"></div>
+    <div ref={timeline} id="timeline" className="flex overflow-x-hidden md:overflow-x-scroll md:overflow-y-hidden w-full md:h-auto h-full" onWheel={(e) => window.innerWidth > 768 ? scroll(e) : empty()}>
+      <div className="md:p-24"></div>
+      <div className="flex flex-col md:flex md:flex-row w-8/12 mx-auto h-full">
         {commitList}
-        <div className="button whitespace-nowrap mx-20 mt-2 text-lg" onClick={nextPage}>
+        <div className="button whitespace-nowrap text-lg mt-10" onClick={nextPage}>
           Fetch Older Commits <MdHistory size={25} className="inline-block -mt-1" />
         </div>
       </div>
-    </>
+    </div>
   );
 }
