@@ -3,13 +3,13 @@ import React, { Fragment, MutableRefObject, Suspense, useEffect, useMemo, useRef
 import { MdHistory } from "react-icons/md";
 import { Await, useFetcher } from "react-router-dom";
 import { clearCache, getNextPage, initRepo } from "../../api/GithubApi";
-import { GitRepo } from "../../api/types";
+import { GitCommit, GitRepo } from "../../api/types";
 import CommitButton from "./CommitButton";
+import CommitDescription from "./CommitDescription";
 
 export default function CommitButtonList(props: { repo: GitRepo, setCount: React.Dispatch<React.SetStateAction<number>> }) {
   const timeline = useRef<HTMLDivElement>(null);
-  const [mouseOver, setMouseOver] = useState(false);
-  const [repo, setRepo] = useState(props.repo);
+  const [focusedCommit, setFocusedCommit] = useState<GitCommit | null>(null);
   const [commitList, setCommitList] = useState<JSX.Element[]>([])
 
 
@@ -26,7 +26,7 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
   }, [])
 
   function setupCommitList(data: GitRepo) {
-    const commits = data.commits.map((v) => <CommitButton key={`${v.shortSha}_commit`} setMouse={setMouseOver} i={v}></CommitButton>);
+    const commits = data.commits.map((v) => <CommitButton key={`${v.shortSha}_commit`} setFocus={setFocusedCommit} i={v}></CommitButton>);
 
     const grouped: JSX.Element[] = [];
     const checkGroups = (i: number): JSX.Element[] => {
@@ -67,15 +67,20 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
   }
 
   function empty() { }
-  return (
+  return (<>
+    <div className="md:p-2"></div>
     <div ref={timeline} id="timeline" className="flex overflow-x-hidden md:overflow-x-scroll md:overflow-y-hidden w-full md:h-auto h-full" onWheel={(e) => window.innerWidth > 768 ? scroll(e) : empty()}>
-      <div className="md:p-24"></div>
-      <div className="flex flex-col md:flex md:flex-row w-8/12 mx-auto h-full">
+      <div className="flex flex-col md:flex md:flex-row w-8/12 mx-auto">
         {commitList}
         <div className="button whitespace-nowrap text-lg mt-10" onClick={nextPage}>
           Fetch Older Commits <MdHistory size={25} className="inline-block -mt-1" />
         </div>
       </div>
+
     </div>
+    <div className="grow flex justify-center z-10">
+      <CommitDescription i={focusedCommit} setFocus={setFocusedCommit} ></CommitDescription>
+    </div>
+  </>
   );
 }
