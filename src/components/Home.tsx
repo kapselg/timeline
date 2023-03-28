@@ -12,7 +12,7 @@ export default function Home() {
       {/* <h1 className="text-center text-2xl text-gh-blue">
         Enter repo's owner and name
       </h1> */}
-      <img src="/bg_logo_text.png" alt="Site's logo" className="h-28 mx-auto mt-6" />
+      <img src="bg_logo_text.png" alt="Site's logo" className="h-28 mx-auto mt-6" />
       <div className="mt-6 grid place-items-center">
         <label htmlFor="repoName">
           Repository name:
