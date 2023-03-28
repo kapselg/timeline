@@ -67,20 +67,21 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
   }
 
   function empty() { }
-  return (<>
-    <div className="md:p-2"></div>
-    <div ref={timeline} id="timeline" className="flex overflow-x-hidden md:overflow-x-scroll md:overflow-y-hidden w-full md:h-auto h-full" onWheel={(e) => window.innerWidth > 768 ? scroll(e) : empty()}>
-      <div className="flex flex-col md:flex md:flex-row w-8/12 mx-auto">
-        {commitList}
-        <div className="button whitespace-nowrap text-lg mt-10" onClick={nextPage}>
-          Fetch Older Commits <MdHistory size={25} className="inline-block -mt-1" />
+  return (
+    <div className="grow flex flex-col h-screen">
+      <div className="md:p-2"></div>
+      <div ref={timeline} id="timeline" className={`flex overflow-x-hidden md:overflow-x-scroll md:overflow-y-hidden w-full md:h-auto ${focusedCommit ? 'hidden md:flex' : ''}`} onWheel={(e) => window.innerWidth > 768 ? scroll(e) : empty()}>
+        <div className="flex flex-col md:flex md:flex-row w-8/12 mx-auto">
+          {commitList}
+          <div className="button whitespace-nowrap text-lg mt-10" onClick={nextPage}>
+            Fetch Older Commits <MdHistory size={25} className="inline-block -mt-1" />
+          </div>
         </div>
-      </div>
 
+      </div>
+      <div className="grow justify-center z-10 w-screen">
+        <CommitDescription i={focusedCommit} setFocus={setFocusedCommit} ></CommitDescription>
+      </div>
     </div>
-    <div className="grow flex justify-center z-10">
-      <CommitDescription i={focusedCommit} setFocus={setFocusedCommit} ></CommitDescription>
-    </div>
-  </>
   );
 }

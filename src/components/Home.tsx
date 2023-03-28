@@ -29,7 +29,7 @@ export default function Home() {
         </Link>
       </div>
       <div className="button !text-white mt-20 mb-10 mx-auto sm:w-1/2">
-        You can also put the repo's owner and name in the url, for example: <Link to='facebook/react' className="text-gh-blue break-words">{`${location.origin}/facebook/react`}</Link>
+        You can also put the repo's owner and name in the url, for example: <Link to='./facebook/react/' className="text-gh-blue break-words">{`${location.origin}/facebook/react`}</Link>
       </div>
     </div>
   );

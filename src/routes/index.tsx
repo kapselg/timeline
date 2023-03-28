@@ -18,4 +18,6 @@ export const routes = createBrowserRouter([
       }
     ]
   }
-])
+], {
+  basename: '/timeline'
+})

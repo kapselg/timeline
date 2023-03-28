@@ -33,9 +33,9 @@ export default function Timeline() {
   }
 
   return (
-    <div className="h-screen flex flex-col ">
+    <div className="h-screen flex flex-col">
 
-      <div className="text-center text-white font-mono text-2xl xl:-mt-10 md:pt-16 sm:mt-0 relative flex flex-wrap w-full justify-between align-baseline">
+      <div className="text-center text-white font-mono text-2xl xl:-mt-10 md:pt-16 sm:mt-0 relative flex flex-wrap w-full justify-around md:justify-between align-baseline">
         <div className="md:order-2">
           Showing&nbsp;
           <span className="text-[#58a6ff]">
