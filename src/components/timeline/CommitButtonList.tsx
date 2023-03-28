@@ -35,18 +35,16 @@ export default function CommitButtonList(props: { repo: GitRepo, setCount: React
       const commitDate = new Date(commits[i].props.i.commit.author.date);
       const sameDate = [];
       for (let commit of commits.slice(i)) {
-        if (new Date(commit.props.i.commit.author.date).toDateString() == commitDate.toDateString()) {
-          sameDate.push(<Fragment key={commitDate.toString() + "_" + i}>{commit}</Fragment>);
-          i++;
-        } else {
-          i++;
+        if (new Date(commit.props.i.commit.author.date).toDateString() !== commitDate.toDateString()) {
           break;
         }
-      }
+        sameDate.push(<Fragment key={commitDate.toString() + "_" + i}>{commit}</Fragment>);
+        i++;
+      } 
 
       return [
         ...grouped,
-        <div className="relative md:mx-8 w-full md:w-auto">
+        <div className="relative md:mx-8 w-full md:w-auto" key={commitDate.toLocaleDateString()}>
           <span className="text-white font-mono">{commitDate.toLocaleDateString()}</span>
           <div className="flex md:flex md:flex-row flex-col border-l-2 border-t-2 py-2 border-white" key={commitDate.toString()}>
             {sameDate}
