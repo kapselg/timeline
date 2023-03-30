@@ -1,6 +1,6 @@
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Link } from "react-router-dom";
-import './Home.css'
+import './Home.css';
 
 export default function Home() {
   const [formValues, setFormValues] = useState<{[key: string]: string}>({repoOwner: '', repoName: ''});
@@ -12,11 +12,11 @@ export default function Home() {
   }
 
   return (
-    <div className="absolute sm:top-1/2 sm:left-1/2 transform sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gh-bg sm:rounded-lg w-full h-full sm:h-auto sm:w-11/12 text-white font-mono shadow-lg grid place-items-center sm:block">
+    <div className="absolute sm:top-1/2 sm:left-1/2 transform sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gh-bg sm:rounded-lg w-full h-full sm:h-auto sm:w-2/3 text-white font-mono shadow-lg grid place-items-center sm:block">
       {/* <h1 className="text-center text-2xl text-gh-blue">
         Enter repo's owner and name
       </h1> */}
-      <img src="/bg_logo_text.png" alt="Site's logo" className="h-28 mx-auto mt-6" />
+      <img src="bg_logo_text.png" alt="Site's logo" className="h-28 mx-auto mt-6" />
       <form className="mt-6 grid place-items-center">
         <label htmlFor="repoName">
           Repository name:

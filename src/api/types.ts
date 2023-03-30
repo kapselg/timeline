@@ -5,7 +5,6 @@ export interface GitRepo {
   };
   commits: GitCommit[];
   cacheDate: number;
-  onPage: number;
 }
 
 export interface GitCommit {
@@ -19,6 +18,12 @@ export interface GitCommit {
       date: string;
     }
   }
+}
+
+export interface TimeClosure {
+  new: boolean;
+  old: boolean;
+  page: number;
 }
 
 export type TimelineParams = {repoOwner: string, repoName: string}

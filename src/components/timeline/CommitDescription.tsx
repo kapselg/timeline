@@ -1,10 +1,11 @@
-import React, { createElement, Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { MdClose, MdCopyAll } from 'react-icons/md';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import { IoMdClipboard } from 'react-icons/io';
+import { MdClose, MdDone } from 'react-icons/md';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import { GitCommit } from '../../api/types';
-import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import './CommitDescription.sass'
+import remarkGfm from 'remark-gfm';
+import { GitCommit } from '../../api/types';
+import './CommitDescription.sass';
 
 export default function CommitDescription({ i, setFocus }: { i: GitCommit | null, setFocus: Dispatch<SetStateAction<GitCommit | null>> }) {
   if (!i) return <button className='button md:mt-32 w-fit absolute left-1/2 transform -translate-x-1/2'>
@@ -14,7 +15,7 @@ export default function CommitDescription({ i, setFocus }: { i: GitCommit | null
   const [clipboard, setClipboard] = useState(false);
   const commitDate = new Date(i!.commit.author.date);
 
-  function copy(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  function handleCopy(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     setClipboard(true);
     navigator.clipboard.writeText(i!.html_url);
@@ -38,8 +39,13 @@ export default function CommitDescription({ i, setFocus }: { i: GitCommit | null
       </div>
       <div>
         <span className="text-[#58a6ff]">URL:</span> <br />
-        <div className="button my-2" onClick={copy}>
-          <span className="pointer-events-none m-1 text-sm break-all">{clipboard ? <MdCopyAll className="mx-auto -my-3" size={25}></MdCopyAll> : i!.html_url}</span>
+        <div className="button my-2 flex items-center">
+          <a className="m-1 text-sm break-all grow !cursor-text" href={i.html_url} target='_blank'>{i.html_url}</a>
+          <button className='button m-2' onClick={handleCopy}>
+            <div className='p-2'>
+              {clipboard ? <MdDone></MdDone> : <IoMdClipboard></IoMdClipboard>}
+            </div>
+          </button>
         </div>
       </div>
     </div>

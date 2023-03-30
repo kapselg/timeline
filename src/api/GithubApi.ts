@@ -1,27 +1,54 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { MdRateReview } from "react-icons/md";
 import { GitCommit, GitRepo, TimelineParams } from "./types.js";
 
+const pageSize = 50;
 const expirationTime = 7200000;
 const makeCacheName = ({ repoOwner, repoName }: TimelineParams) => `cached-${repoOwner}-${repoName}`;
+
+export async function checkRateLimit(){
+  const {used, limit, reset} = (await axios.get<{rate: {used: number, limit: number, reset: number}}>('https://api.github.com/rate_limit')).data.rate
+  if (used === limit){
+    const date = new Date(0);
+    date.setUTCSeconds(reset);
+    return date;
+  }
+}
+
+export function sortAndCheck(data: GitCommit[]){
+  const uniqueSha = new Set(data.map(c => c.sha))
+  data = data.filter(c=> {
+    if(uniqueSha.has(c.sha)){
+      uniqueSha.delete(c.sha)
+      return c
+    }
+  })
+  data.sort((prev, next) => new Date(prev.commit.author.date).valueOf() - new Date(next.commit.author.date).valueOf())
+  return data
+}
 
 /**
  *
  * @param owner Repo owner
  * @param repoName Repo name
- * @returns Commits to a GitHub repo
+ * @returns Commits from a GitHub repo
  */
-export async function fetchCommits({ repoOwner, repoName, page }: TimelineParams & { page: number }) {
+export async function fetchCommits({ repoOwner, repoName, page, until, since }: TimelineParams & { until?: Date, since?: Date, page?: number }) {
   const response = await axios<GitCommit[]>(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`, {
     params: {
-      per_page: 50,
+      per_page: pageSize,
       page,
+      since,
+      until,
     },
   });
 
-  return response.data.map((val) => {
+  const commits = response.data.map((val) => {
     val.shortSha = val.sha.substring(0, 7);
     return val;
   });
+
+  return commits;
 }
 
 /**
@@ -50,30 +77,14 @@ export async function getCachedRepo({ repoOwner, repoName }: TimelineParams) {
  */
 export async function initRepo({ repoOwner, repoName }: TimelineParams) {
   const response = await axios<GitRepo>(`https://api.github.com/repos/${repoOwner}/${repoName}`);
-
   const data = response.data;
   data.commits = await fetchCommits({ repoOwner, repoName, page: 1 });
   data.cacheDate = new Date().getTime();
-  data.onPage = 1;
 
   cacheRepo({ repo: data, repoName, repoOwner });
 
 
   return data;
-}
-
-export async function getNextPage({ repoOwner, repoName, repo }: TimelineParams & { repo: GitRepo }) {
-  const response = await fetchCommits({
-    repoOwner,
-    repoName,
-    page: repo.onPage + 1,
-  });
-  repo.commits = [...repo.commits, ...response];
-  repo.onPage++;
-
-  cacheRepo({ repo, repoName, repoOwner });
-
-  return repo;
 }
 
 export function cacheRepo({ repoOwner, repoName, repo }: TimelineParams & { repo: GitRepo }) {
@@ -95,7 +106,6 @@ export function cacheRepo({ repoOwner, repoName, repo }: TimelineParams & { repo
       shortSha: commit.shortSha
     } as GitCommit)),
     name: repo.name,
-    onPage: repo.onPage,
   } as GitRepo;
 
 
@@ -105,9 +115,9 @@ export function cacheRepo({ repoOwner, repoName, repo }: TimelineParams & { repo
 export function clearCache({ repoOwner, repoName }: TimelineParams) {
   localStorage.removeItem(makeCacheName({ repoOwner, repoName }));
 }
-
 // export async function fetchGitRepo(author: string, name: string) {
 //   const res = await axios<GitRepo>(`https://api.github.com/repos/${author}/${name}`);
 //   const res_1 = res.data;
 //   return ({ ...res_1, commits: axios<GitCommit[]>(`https://api.github.com/repos/${author}/${name}`).then((res_2) => res_2.data) });
 // }
+

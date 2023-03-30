@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { GitCommit } from "../../api/types";
 
 export default function CommitButton(props: { i: GitCommit; setFocus: Dispatch<SetStateAction<GitCommit | null>>}) {

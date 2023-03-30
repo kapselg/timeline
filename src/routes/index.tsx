@@ -1,4 +1,4 @@
-import { createBrowserRouter, Link } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import { App } from '../App'
 import Home from '../components/Home'
 import Timeline from '../components/timeline/Timeline'
