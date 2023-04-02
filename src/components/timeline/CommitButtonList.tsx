@@ -4,7 +4,7 @@ import { GitCommit, GitRepo, TimeClosure } from "../../api/types";
 import CommitButton from "./CommitButton";
 import CommitDescription from "./CommitDescription";
 
-export default function CommitButtonList(props: { repo: GitRepo; bounds: TimeClosure; setCount: React.Dispatch<React.SetStateAction<number>>; forwardInTime: (s: Date, u: Date) => void; backInTime: () => void }) {
+export default function CommitButtonList(props: { repo: GitRepo; bounds: TimeClosure; setCount: React.Dispatch<React.SetStateAction<number>>; forwardInTime: (s: Date, u: Date) => void; backInTime: () => Promise<boolean> }) {
   const timeline = useRef<HTMLDivElement>(null);
   const [focusedCommit, setFocusedCommit] = useState<GitCommit | null>(null);
   const [commitList, setCommitList] = useState<JSX.Element[]>([]);
@@ -56,8 +56,13 @@ export default function CommitButtonList(props: { repo: GitRepo; bounds: TimeClo
     props.forwardInTime(new Date(new Date(firstCommitDate).valueOf() + 86400000), new Date(firstCommitDate.valueOf() + 60480000 * weeks));
   }
 
-  function backwardsPage() {
-    props.backInTime()
+  async function backwardsPage() {
+    props.backInTime().then(() => {
+      setTimeout(() => {
+        timeline.current?.scrollTo({left: 9999999999999})
+      }, 500);
+    })
+   
   }
 
   function empty() {}

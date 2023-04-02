@@ -34,7 +34,7 @@ export default function Timeline() {
         ...bounds,
         old: false,
       });
-      return;
+      return false;
     }
 
     setRepoData(
@@ -46,6 +46,8 @@ export default function Timeline() {
         });
       })
     );
+    
+    return true;
   }
 
   async function forwardInTime(since: Date, until: Date) {
@@ -62,7 +64,7 @@ export default function Timeline() {
         ...bounds,
         new: false,
       });
-      return;
+      return false;
     }
   }
 
