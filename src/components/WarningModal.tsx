@@ -2,7 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { BehaviorSubject, Subject, map } from "rxjs";
 
-export const modals = {
+export function setModal(modalType: JSX.Element){
+  modalContents.next(modalType)
+}
+
+export const PremadeModals = {
   RATE_LIMIT: (dateDue: Date) => {
     const minutesLeft = Math.ceil((new Date().valueOf() - dateDue.valueOf()) / 60000);
     let minutesLeftText;
@@ -20,7 +24,7 @@ export const modals = {
   },
 };
 
-export const modalContents = new Subject<JSX.Element | null>();
+const modalContents = new Subject<JSX.Element | null>();
 
 export default function WarningModal() {
   const [children, setChildren] = useState<JSX.Element | null>(null);

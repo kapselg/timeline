@@ -1,18 +1,21 @@
 import axios, { AxiosResponse } from "axios";
 import { MdRateReview } from "react-icons/md";
 import { GitCommit, GitRepo, TimelineParams } from "./types.js";
+import * as WarningModal from "../components/WarningModal.js";
 
 const pageSize = 50;
 const expirationTime = 7200000;
 const makeCacheName = ({ repoOwner, repoName }: TimelineParams) => `cached-${repoOwner}-${repoName}`;
 
-export async function checkRateLimit(){
-  const {used, limit, reset} = (await axios.get<{rate: {used: number, limit: number, reset: number}}>('https://api.github.com/rate_limit')).data.rate
+export async function apiQuotaAvailable(){
+  const {used, limit, reset} = (await axios.get<{rate: {used: number, limit: number, reset: number}}>('https://api.github.com/rate_limit')).data.rate  
   if (used === limit){
     const date = new Date(0);
     date.setUTCSeconds(reset);
-    return date;
+    WarningModal.setModal(WarningModal.PremadeModals.RATE_LIMIT(date))
+    throw new Error('GitHub API quota has been exceeded!');
   }
+
 }
 
 export function sortAndCheck(data: GitCommit[]){
@@ -34,6 +37,7 @@ export function sortAndCheck(data: GitCommit[]){
  * @returns Commits from a GitHub repo
  */
 export async function fetchCommits({ repoOwner, repoName, page, until, since }: TimelineParams & { until?: Date, since?: Date, page?: number }) {
+  await apiQuotaAvailable()
   const response = await axios<GitCommit[]>(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`, {
     params: {
       per_page: pageSize,
@@ -76,6 +80,7 @@ export async function getCachedRepo({ repoOwner, repoName }: TimelineParams) {
  * @returns Information about GitHub repo from API
  */
 export async function initRepo({ repoOwner, repoName }: TimelineParams) {
+  if (!(await apiQuotaAvailable())) throw new Error('GitHub API quota has been exceeded!')
   const response = await axios<GitRepo>(`https://api.github.com/repos/${repoOwner}/${repoName}`);
   const data = response.data;
   data.commits = await fetchCommits({ repoOwner, repoName, page: 1 });
