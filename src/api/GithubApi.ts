@@ -15,7 +15,6 @@ export async function apiQuotaAvailable(){
     WarningModal.setModal(WarningModal.PremadeModals.RATE_LIMIT(date))
     throw new Error('GitHub API quota has been exceeded!');
   }
-
 }
 
 export function sortAndCheck(data: GitCommit[]){
@@ -38,6 +37,8 @@ export function sortAndCheck(data: GitCommit[]){
  */
 export async function fetchCommits({ repoOwner, repoName, page, until, since }: TimelineParams & { until?: Date, since?: Date, page?: number }) {
   await apiQuotaAvailable()
+  console.log('fetching');
+  
   const response = await axios<GitCommit[]>(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`, {
     params: {
       per_page: pageSize,
@@ -80,8 +81,8 @@ export async function getCachedRepo({ repoOwner, repoName }: TimelineParams) {
  * @returns Information about GitHub repo from API
  */
 export async function initRepo({ repoOwner, repoName }: TimelineParams) {
-  if (!(await apiQuotaAvailable())) throw new Error('GitHub API quota has been exceeded!')
   const response = await axios<GitRepo>(`https://api.github.com/repos/${repoOwner}/${repoName}`);
+  console.log('fetching');
   const data = response.data;
   data.commits = await fetchCommits({ repoOwner, repoName, page: 1 });
   data.cacheDate = new Date().getTime();

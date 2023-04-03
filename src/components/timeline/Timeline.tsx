@@ -8,9 +8,21 @@ import TimeForm from "./TimeForm";
 export default function Timeline() {
   const repoInfo = useParams() as TimelineParams;
   const [bounds, setBounds] = useState<TimeClosure>({ new: true, old: true, page: 0 });
-  const [repoData, setRepoData] = useState(GithubApi.getCachedRepo(repoInfo));
+  const [repoData, setRepoData] = useState<Promise<GitRepo>>();
   const [count, setCount] = useState<number>(0);
   const [fromDate, setFromDate] = useState(false);
+
+  useMemo(() => {
+    setRepoData(GithubApi.getCachedRepo(repoInfo))
+  }, [repoInfo])
+
+  useEffect(() => {
+    setBounds({ ...bounds, page: Math.ceil(count / 50) });
+  }, [count]);
+
+  useMemo(async () => {
+    setCount((await repoData)!.commits.length);
+  }, [repoData]);
 
   async function refreshRepo() {
     GithubApi.clearCache(repoInfo);
@@ -26,7 +38,7 @@ export default function Timeline() {
     const newCommits = await GithubApi.fetchCommits({
       ...repoInfo,
       page: bounds.page,
-      until: new Date((await repoData).commits[0].commit.author.date) || new Date(),
+      until: new Date((await repoData)!.commits[0].commit.author.date) || new Date(),
     });
 
     if (newCommits.length === 0) {
@@ -40,6 +52,7 @@ export default function Timeline() {
     setRepoData(
       new Promise(async (res, rej) => {
         const repo = await repoData;
+        if(repo)
         res({
           ...repo,
           commits: [...repo.commits, ...newCommits],
@@ -67,14 +80,6 @@ export default function Timeline() {
       return false;
     }
   }
-
-  useEffect(() => {
-    setBounds({ ...bounds, page: Math.ceil(count / 50) });
-  }, [count]);
-
-  useMemo(async () => {
-    setCount((await repoData).commits.length);
-  }, [repoData]);
   
   return (
     <div className="h-screen flex flex-col">
@@ -84,7 +89,10 @@ export default function Timeline() {
           Showing&nbsp;
           <span className="text-[#58a6ff]">
             <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">...</p>}>
-              <Await resolve={repoData}>{(data: GitRepo) => count || data.commits.length}</Await>
+              <Await resolve={repoData}>{(data: GitRepo) => {
+              if(data)
+                return count || data.commits.length
+                }}</Await>
             </Suspense>
           </span>
           &nbsp;commits from&nbsp;
@@ -103,7 +111,10 @@ export default function Timeline() {
 
       <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>
         <Await resolve={repoData} errorElement={<p>Error loading repo data!</p>}>
-          {(data: GitRepo) => <CommitButtonList bounds={bounds} backInTime={backInTime} forwardInTime={forwardInTime} setCount={setCount} repo={data}></CommitButtonList>}
+          {(data: GitRepo) =>{
+          if(data)
+          return <CommitButtonList bounds={bounds} backInTime={backInTime} forwardInTime={forwardInTime} setCount={setCount} repo={data}></CommitButtonList>
+          }}
         </Await>
       </Suspense>
     </div>
