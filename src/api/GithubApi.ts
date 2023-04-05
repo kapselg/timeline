@@ -5,6 +5,7 @@ import * as WarningModal from "../components/WarningModal.js";
 
 const pageSize = 50;
 const expirationTime = 7200000;
+let resetAt = new Date();
 const makeCacheName = ({ repoOwner, repoName }: TimelineParams) => `cached-${repoOwner}-${repoName}`;
 
 export async function apiQuotaAvailable(){
@@ -13,7 +14,8 @@ export async function apiQuotaAvailable(){
     const date = new Date(0);
     date.setUTCSeconds(reset);
     WarningModal.setModal(WarningModal.PremadeModals.RATE_LIMIT(date))
-    throw new Error('GitHub API quota has been exceeded!');
+    resetAt = date;
+    throw new Error('API_QUOTA_EXCEEDED');
   }
 }
 
@@ -36,7 +38,7 @@ export function sortAndCheck(data: GitCommit[]){
  * @returns Commits from a GitHub repo
  */
 export async function fetchCommits({ repoOwner, repoName, page, until, since }: TimelineParams & { until?: Date, since?: Date, page?: number }) {
-  await apiQuotaAvailable()
+  await apiQuotaAvailable();
   console.log('fetching');
   
   const response = await axios<GitCommit[]>(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`, {
@@ -81,6 +83,7 @@ export async function getCachedRepo({ repoOwner, repoName }: TimelineParams) {
  * @returns Information about GitHub repo from API
  */
 export async function initRepo({ repoOwner, repoName }: TimelineParams) {
+  await apiQuotaAvailable();
   const response = await axios<GitRepo>(`https://api.github.com/repos/${repoOwner}/${repoName}`);
   console.log('fetching');
   const data = response.data;
@@ -120,6 +123,12 @@ export function cacheRepo({ repoOwner, repoName, repo }: TimelineParams & { repo
 
 export function clearCache({ repoOwner, repoName }: TimelineParams) {
   localStorage.removeItem(makeCacheName({ repoOwner, repoName }));
+}
+
+export function handleApiRateLimitError(e: any){
+  if(e && e.message && e.message === 'API_QUOTA_EXCEEDED'){
+    WarningModal.setModal(WarningModal.PremadeModals.RATE_LIMIT(resetAt));
+  }
 }
 // export async function fetchGitRepo(author: string, name: string) {
 //   const res = await axios<GitRepo>(`https://api.github.com/repos/${author}/${name}`);
