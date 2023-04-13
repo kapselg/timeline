@@ -8,7 +8,7 @@ import TimeForm from "./TimeForm";
 export default function Timeline() {
   const repoInfo = useParams() as TimelineParams;
   const [bounds, setBounds] = useState<TimeClosure>({ new: true, old: true, page: 0 });
-  const [repoData, setRepoData] = useState<Promise<GitRepo>>();
+  const [repoData, setRepoData] = useState<Promise<GitRepo | undefined>>();
   const [count, setCount] = useState<number>(0);
   const [fromDate, setFromDate] = useState(false);
 
@@ -46,7 +46,7 @@ export default function Timeline() {
         page: bounds.page,
         until: new Date((await repoData)!.commits[0].commit.author.date) || new Date(),
       });
-
+      if(!newCommits) return false;
       if (newCommits.length === 0) {
         setBounds({
           ...bounds,
@@ -81,7 +81,7 @@ export default function Timeline() {
         until,
       });
 
-      if (newCommits.length === 0) {
+      if (!newCommits || newCommits.length === 0) {
         console.log("wtf");
 
         setBounds({
