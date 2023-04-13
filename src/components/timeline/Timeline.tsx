@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Await, useParams } from "react-router-dom";
 import * as GithubApi from "../../api/GithubApi";
-import { GitCommit, GitRepo, TimeClosure, TimelineParams } from "../../api/types";
+import { GitRepo, TimeClosure, TimelineParams } from "../../api/types";
 import CommitButtonList from "./CommitButtonList";
 import TimeForm from "./TimeForm";
 
@@ -13,7 +13,7 @@ export default function Timeline() {
   const [fromDate, setFromDate] = useState(false);
 
   useMemo(() => {
-    setRepoData(GithubApi.getCachedRepo(repoInfo));
+    setRepoData(GithubApi.getCachedRepo(repoInfo));    
   }, [repoInfo]);
 
   useEffect(() => {
@@ -120,9 +120,10 @@ export default function Timeline() {
           Refetch repo
         </button>
 
-        <button className="button mx-3 text-lg  md:order-3 my-2 md:my-0" onClick={() => setFromDate(true)}>
+        {/* <button className="button mx-3 text-lg  md:order-3 my-2 md:my-0" onClick={() => setFromDate(true)}>
           Fetch from date
-        </button>
+        </button> */}
+        <div className="md:order-3"></div>
       </div>
 
       <Suspense fallback={<p className="mx-auto font-mono text-white text-xl">Loading information about repository...</p>}>

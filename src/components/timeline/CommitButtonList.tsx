@@ -59,7 +59,7 @@ export default function CommitButtonList(props: { repo: GitRepo; bounds: TimeClo
   async function backwardsPage() {
     props.backInTime().then(() => {
       setTimeout(() => {
-        timeline.current?.scrollTo({left: 9999999999999})
+        timeline.current?.scrollTo({left: timeline.current?.scrollWidth * 2})
       }, 500);
     })
    

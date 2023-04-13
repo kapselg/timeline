@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
-import { BehaviorSubject, Subject, map } from "rxjs";
+import { Subject } from "rxjs";
+import { TimelineParams } from "../api/types";
 
 export function setModal(modalType: JSX.Element){
   modalContents.next(modalType)
@@ -22,10 +23,14 @@ export const PremadeModals = {
       </div>
     );
   },
+  UNKNOWN_REPO: ({repoName, repoOwner}: TimelineParams) => (
+      <div className="text-white"> 
+        <h2 className="text-xl mt-3">There is no such repo as: <code className="text-xl text-gh-blue px-1 bg-gh-border">{repoOwner}/{repoName}</code></h2>
+      </div>
+    )
 };
 
 const modalContents = new Subject<JSX.Element | null>();
-
 export default function WarningModal() {
   const [children, setChildren] = useState<JSX.Element | null>(null);
 

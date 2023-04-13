@@ -8,8 +8,9 @@ import { GitCommit } from '../../api/types';
 import './CommitDescription.sass';
 
 export default function CommitDescription({ i, setFocus }: { i: GitCommit | null, setFocus: Dispatch<SetStateAction<GitCommit | null>> }) {
-  if (!i) return <button className='button md:mt-32 w-fit absolute left-1/2 transform -translate-x-1/2'>
-    Click on a commit SHA to show it's description
+  if (!i) return <button className='button md:mt-16 w-fit absolute left-1/2 transform -translate-x-1/2 !cursor-default'>
+    <p className='my-1'>Click on a commit SHA to show it's description</p>
+    <p className='my-1'>Hold shift to scroll the timeline faster</p>
   </button>;
 
   const [clipboard, setClipboard] = useState(false);
@@ -39,8 +40,8 @@ export default function CommitDescription({ i, setFocus }: { i: GitCommit | null
       </div>
       <div>
         <span className="text-[#58a6ff]">URL:</span> <br />
-        <div className="button my-2 flex items-center">
-          <a className="m-1 text-sm break-all grow !cursor-text" href={i.html_url} target='_blank'>{i.html_url}</a>
+        <div className="button my-2 flex items-center !cursor-default">
+          <a className="m-1 text-sm break-all grow" href={i.html_url} target='_blank'>{i.html_url}</a>
           <button className='button m-2' onClick={handleCopy}>
             <div className='p-2'>
               {clipboard ? <MdDone></MdDone> : <IoMdClipboard></IoMdClipboard>}
